@@ -226,8 +226,7 @@ def get_doc(word, level=0):
         return ["Not connected to IPython, cannot query: %s" % word]
     msg_id = kc.shell_channel.object_info(word, level)
     doc = get_doc_msg(msg_id)
-    # get around unicode problems when interfacing with vim
-    return [d.encode(vim_encoding) for d in doc]
+    return doc
 
 import re
 # from http://serverfault.com/questions/71285/in-centos-4-4-how-can-i-strip-escape-sequences-from-a-text-file
@@ -426,7 +425,8 @@ def update_subchannel_msgs(debug=False, force=False):
         if s.find('\n') == -1:
             # somewhat ugly unicode workaround from 
             # http://vim.1045645.n5.nabble.com/Limitations-of-vim-python-interface-with-respect-to-character-encodings-td1223881.html
-            if isinstance(s,unicode):
+            # Still needed in Python3? All the world uses UTF8?
+            if isinstance(s,str):
                 s=s.encode(vim_encoding)
             b.append(s)
         else:
